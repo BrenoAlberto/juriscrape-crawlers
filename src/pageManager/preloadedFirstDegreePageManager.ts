@@ -1,8 +1,9 @@
 import { Browser, Page } from "puppeteer";
 
-export class PageManager {
-    private pages: Page[] = [];
+export class PreloadedFirstDegreePageManager {
+    private preloadedFirstDegreePages: Page[] = [];
     private readonly poolSize: number;
+    private readonly preloadFirstDegreeUrl = 'https://www2.tjal.jus.br/cpopg/open.do';
 
     constructor(private readonly puppeeterBrowser: Browser, poolSize = 5) {
         this.poolSize = poolSize;
@@ -12,9 +13,9 @@ export class PageManager {
     private async init() {
         const promises: Promise<Page>[] = [];
         for (let i = 0; i < this.poolSize; i++) {
-            promises.push(this.createNewPage());
+            promises.push(this.createPreloadedFirstDegreePage());
         }
-        this.pages = await Promise.all(promises);
+        this.preloadedFirstDegreePages = await Promise.all(promises);
     }
 
     private async createNewPage() {
@@ -22,17 +23,23 @@ export class PageManager {
         return newBrowserContext.newPage();
     }
 
+    private async createPreloadedFirstDegreePage() {
+        const newPage = await this.createNewPage();
+        await newPage.goto(this.preloadFirstDegreeUrl);
+        return newPage;
+    }
+
     async acquirePage(): Promise<Page> {
-        if (this.pages.length === 0) {
+        if (this.preloadedFirstDegreePages.length === 0) {
             return this.createNewPage();
         } else {
-            return this.pages.pop()!;
+            return this.preloadedFirstDegreePages.pop()!;
         }
     }
 
     async releasePage(page: Page) {
         await page.close();
         const newPage = await this.createNewPage();
-        this.pages.push(newPage);
+        this.preloadedFirstDegreePages.push(newPage);
     }
 }
