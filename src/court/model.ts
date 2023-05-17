@@ -9,11 +9,15 @@ interface PartyModel {
     type: string;
 }
 
+type Court = "TJAL" | "TJCE";
+
+type Degree = "first" | "second";
+
 export class CourtCaseModel {
     caseNumber: string;
-    court: string; // e.g., "TJAL" or "TJCE"
-    degree: string; // e.g., "1º grau" or "2º grau"
-    caseClass: string; // Changed 'class' to 'caseClass'
+    court: Court;
+    degree: Degree;
+    caseClass: string;
     area: string;
     subject: string;
     distributionDate: string;
@@ -22,11 +26,11 @@ export class CourtCaseModel {
     parties: PartyModel[];
     movements: MovementModel[];
 
-    constructor(caseNumber: string, court: string, degree: string, caseClass: string, area: string, subject: string, distributionDate: string, judge: string, actionValue: number, parties: PartyModel[], movements: MovementModel[]) {
+    constructor(caseNumber: string, court: Court, degree: Degree, caseClass: string, area: string, subject: string, distributionDate: string, judge: string, actionValue: number, parties: PartyModel[], movements: MovementModel[]) {
         this.caseNumber = caseNumber;
         this.court = court;
         this.degree = degree;
-        this.caseClass = caseClass; // Changed 'class' to 'caseClass'
+        this.caseClass = caseClass;
         this.area = area;
         this.subject = subject;
         this.distributionDate = distributionDate;

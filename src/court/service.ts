@@ -24,4 +24,14 @@ export class CourtService {
             throw new Error("Process not recognized")
         }
     }
+
+    public getUnitOriginByCaseNumber(caseNumber: string): string {
+        const matches = caseNumber.match(/(\d{4})$/)
+        if (matches && matches[1]) {
+            return matches[1]
+        } else {
+            throw new Error("Unit Origin not recognized")
+        }
+    }
+
 }
