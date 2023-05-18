@@ -1,6 +1,6 @@
 import { Page } from "puppeteer";
 
-export class TJALFirstDegreeCasePage {
+export class SecondDegreeCasePage {
     private readonly elementsXPathSelectors = {
         caseClassSpan: '//div[@id="classeProcesso"]/span',
         areaSpan: '//div[@id="areaProcesso"]/span',
@@ -12,7 +12,9 @@ export class TJALFirstDegreeCasePage {
 
     constructor(private readonly page: Page) { }
 
-    async fetchCaseData() {
+    public async fetchCaseData(caseURL: string) {
+        await this.page.goto(caseURL);
+
         await this.page.waitForXPath(this.elementsXPathSelectors.caseClassSpan);
         const caseClassSpan = (await this.page.$x(this.elementsXPathSelectors.caseClassSpan))[0];
         const caseClass = await (await caseClassSpan.getProperty('textContent')).jsonValue();

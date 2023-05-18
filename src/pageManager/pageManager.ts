@@ -4,9 +4,23 @@ export class PageManager {
     private pages: Page[] = [];
     private readonly poolSize: number;
 
-    constructor(private readonly puppeeterBrowser: Browser, poolSize = 5) {
+    constructor(private readonly puppeeterBrowser: Browser, poolSize = 1) {
         this.poolSize = poolSize;
         this.init();
+    }
+
+    public async acquirePage(): Promise<Page> {
+        if (this.pages.length === 0) {
+            return this.createNewPage();
+        } else {
+            return this.pages.pop()!;
+        }
+    }
+
+    public async releasePage(page: Page) {
+        await page.close();
+        const newPage = await this.createNewPage();
+        this.pages.push(newPage);
     }
 
     private async init() {
@@ -20,19 +34,5 @@ export class PageManager {
     private async createNewPage() {
         const newBrowserContext = await this.puppeeterBrowser.createIncognitoBrowserContext();
         return newBrowserContext.newPage();
-    }
-
-    async acquirePage(): Promise<Page> {
-        if (this.pages.length === 0) {
-            return this.createNewPage();
-        } else {
-            return this.pages.pop()!;
-        }
-    }
-
-    async releasePage(page: Page) {
-        await page.close();
-        const newPage = await this.createNewPage();
-        this.pages.push(newPage);
     }
 }

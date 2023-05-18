@@ -1,17 +1,6 @@
 import { Page } from "puppeteer";
 
-export class TJALSecondDegreeCasePage {
-    // caseNumber: string;
-    // court: string; // e.g., "TJAL" or "TJCE"
-    // degree: string; // e.g., "1º grau" or "2º grau"
-    // caseClass: string; // Changed 'class' to 'caseClass'
-    // area: string;
-    // subject: string;
-    // distributionDate: string;
-    // judge: string;
-    // actionValue: number;
-    // parties: PartyModel[];
-    // movements: MovementModel[];
+export class FirstDegreeCasePage {
     private readonly elementsXPathSelectors = {
         caseClassSpan: '//div[@id="classeProcesso"]/span',
         areaSpan: '//div[@id="areaProcesso"]/span',
@@ -23,9 +12,7 @@ export class TJALSecondDegreeCasePage {
 
     constructor(private readonly page: Page) { }
 
-    async fetchCaseData(caseURL: string) {
-        await this.page.goto(caseURL);
-
+    public async fetchCaseData() {
         await this.page.waitForXPath(this.elementsXPathSelectors.caseClassSpan);
         const caseClassSpan = (await this.page.$x(this.elementsXPathSelectors.caseClassSpan))[0];
         const caseClass = await (await caseClassSpan.getProperty('textContent')).jsonValue();

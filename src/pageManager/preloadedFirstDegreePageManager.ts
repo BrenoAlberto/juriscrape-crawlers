@@ -1,21 +1,48 @@
 import { Browser, Page } from "puppeteer";
 
 export class PreloadedFirstDegreePageManager {
-    private preloadedFirstDegreePages: Page[] = [];
+    private preloadedFirstDegreePages: {
+        TJAL: { url: string, pages: Page[] },
+        TJCE: { url: string, pages: Page[] }
+    } = {
+            TJAL: { url: "https://www2.tjal.jus.br/cpopg/open.do", pages: [] },
+            TJCE: { url: "https://esaj.tjce.jus.br/cpopg/open.do", pages: [] }
+        }
     private readonly poolSize: number;
-    private readonly preloadFirstDegreeUrl = 'https://www2.tjal.jus.br/cpopg/open.do';
 
-    constructor(private readonly puppeeterBrowser: Browser, poolSize = 5) {
+    constructor(private readonly puppeeterBrowser: Browser, poolSize = 10) {
         this.poolSize = poolSize;
         this.init();
+    }
+
+    public async acquirePage(court: "TJAL" | "TJCE"): Promise<Page> {
+        if (this.preloadedFirstDegreePages[court].pages.length === 0) {
+            return this.createPreloadedFirstDegreePage(this.preloadedFirstDegreePages[court].url);
+        } else {
+            return this.preloadedFirstDegreePages[court].pages.pop()!;
+        }
+    }
+
+    public async releasePage(page: Page, court: "TJAL" | "TJCE") {
+        await page.close();
+        const newPage = await this.createPreloadedFirstDegreePage(this.preloadedFirstDegreePages[court].url);
+        this.preloadedFirstDegreePages[court].pages.push(newPage);
     }
 
     private async init() {
         const promises: Promise<Page>[] = [];
         for (let i = 0; i < this.poolSize; i++) {
-            promises.push(this.createPreloadedFirstDegreePage());
+            promises.push(this.createPreloadedFirstDegreePage(this.preloadedFirstDegreePages.TJAL.url));
         }
-        this.preloadedFirstDegreePages = await Promise.all(promises);
+        for (let i = 0; i < this.poolSize; i++) {
+            promises.push(this.createPreloadedFirstDegreePage(this.preloadedFirstDegreePages.TJCE.url));
+        }
+        const [tjalPages, tjcePages] = await Promise.all([
+            Promise.all(promises.slice(0, this.poolSize)),
+            Promise.all(promises.slice(this.poolSize))
+        ]);
+        this.preloadedFirstDegreePages.TJAL.pages = tjalPages;
+        this.preloadedFirstDegreePages.TJCE.pages = tjcePages;
     }
 
     private async createNewPage() {
@@ -23,23 +50,9 @@ export class PreloadedFirstDegreePageManager {
         return newBrowserContext.newPage();
     }
 
-    private async createPreloadedFirstDegreePage() {
+    private async createPreloadedFirstDegreePage(preloadFirstDegreeUrl: string) {
         const newPage = await this.createNewPage();
-        await newPage.goto(this.preloadFirstDegreeUrl);
+        await newPage.goto(preloadFirstDegreeUrl);
         return newPage;
-    }
-
-    async acquirePage(): Promise<Page> {
-        if (this.preloadedFirstDegreePages.length === 0) {
-            return this.createNewPage();
-        } else {
-            return this.preloadedFirstDegreePages.pop()!;
-        }
-    }
-
-    async releasePage(page: Page) {
-        await page.close();
-        const newPage = await this.createNewPage();
-        this.preloadedFirstDegreePages.push(newPage);
     }
 }

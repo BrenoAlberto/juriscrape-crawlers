@@ -1,7 +1,7 @@
 import { Page } from "puppeteer";
 
-export class TJALSecondDegreeSearchPage {
-    private tjalSecondDegreeURL = "https://www2.tjal.jus.br/cposg5"
+export class SecondDegreeSearchPage {
+    private tjalSecondDegreeURL = "https://esaj.tjce.jus.br/cposg5"
 
     private readonly elementsXPathSelectors = {
         inputCaseNumber: "//input[@id='numeroDigitoAnoUnificado']",
@@ -11,7 +11,7 @@ export class TJALSecondDegreeSearchPage {
 
     constructor(private readonly page: Page) { }
 
-    async fetchCaseURL(caseNumber: string, processNumber: string) {
+    public async fetchCaseURL(caseNumber: string, processNumber: string) {
         const url = `${this.tjalSecondDegreeURL}/search.do?conversationId=&paginaConsulta=0&cbPesquisa=NUMPROC&numeroDigitoAnoUnificado=${processNumber}&foroNumeroUnificado=0001&dePesquisaNuUnificado=${caseNumber}&dePesquisaNuUnificado=UNIFICADO&dePesquisa=&tipoNuProcesso=UNIFICADO`;
         await this.page.goto(url);
 
