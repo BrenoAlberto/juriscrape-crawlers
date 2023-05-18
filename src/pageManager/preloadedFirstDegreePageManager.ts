@@ -24,9 +24,8 @@ export class PreloadedFirstDegreePageManager {
     }
 
     public async releasePage(page: Page, court: "TJAL" | "TJCE") {
-        await page.close();
-        // const newPage = await this.createPreloadedFirstDegreePage(this.preloadedFirstDegreePages[court].url);
-        // this.preloadedFirstDegreePages[court].pages.push(newPage);
+        await page.goto(this.preloadedFirstDegreePages[court].url);
+        this.preloadedFirstDegreePages[court].pages.push(page);
     }
 
     private async init() {

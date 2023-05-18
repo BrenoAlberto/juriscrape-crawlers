@@ -14,10 +14,10 @@ export class FirstDegreeCaseCrawler implements CourtCrawler {
         private readonly court: "TJAL" | "TJCE",
     ) { }
 
-    public async scrapeCase(_caseNumber: string, processNumber: string, originNumber: string): Promise<any> {
+    public async scrapeCase(caseNumber: string, processNumber: string, originNumber: string): Promise<any> {
         this.ensurePageIsInitialized();
         await this.firstDegreeSearchPage!.goToCase(processNumber, originNumber, this.court);
-        const caseData = await this.firstDegreeCasePage!.fetchCaseData();
+        const caseData = await this.firstDegreeCasePage!.fetchCaseData(caseNumber);
         console.log(caseData)
 
         this.releasePage();

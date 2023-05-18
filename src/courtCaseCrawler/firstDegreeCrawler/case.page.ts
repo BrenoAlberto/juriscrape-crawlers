@@ -1,47 +1,57 @@
 import { Page } from "puppeteer";
 
 export class FirstDegreeCasePage {
-    private readonly elementsXPathSelectors = {
-        caseClassSpan: '//div[@id="classeProcesso"]/span',
-        areaSpan: '//div[@id="areaProcesso"]/span',
-        subjectSpan: '//div[@id="assuntoProcesso"]/span',
+    private readonly elementsCSSSelectors = {
+        caseClass: '#classeProcesso',
+        area: '#areaProcesso',
+        subject: '#assuntoProcesso',
         // data de distribuição 
-        // juiz
-        actionValueSpan: '//div[@id="valorAcaoProcesso"]/span',
+        distributionDate: '#dataHoraDistribuicaoProcesso',
+        judge: "#juizProcesso",
+        actionValue: '#valorAcaoProcesso',
     }
 
     constructor(private readonly page: Page) { }
 
-    public async fetchCaseData() {
+    public async fetchCaseData(caseNumber: string) {
         try {
-            // await this.page.waitForXPath(this.elementsXPathSelectors.caseClassSpan);
-            const caseClassSpan = (await this.page.$x(this.elementsXPathSelectors.caseClassSpan))[0];
-            const caseClass = await (await caseClassSpan.getProperty('textContent')).jsonValue();
 
-            // await this.page.waitForXPath(this.elementsXPathSelectors.areaSpan);
-            const areaSpan = (await this.page.$x(this.elementsXPathSelectors.areaSpan))[0];
-            const area = await (await areaSpan.getProperty('textContent')).jsonValue();
-
-            // await this.page.waitForXPath(this.elementsXPathSelectors.subjectSpan);
-            const subjectSpan = (await this.page.$x(this.elementsXPathSelectors.subjectSpan))[0];
-            const subject = await (await subjectSpan.getProperty('textContent')).jsonValue();
-
-            // await this.page.waitForXPath(this.elementsXPathSelectors.actionValueSpan);
-            const actionValueSpan = (await this.page.$x(this.elementsXPathSelectors.actionValueSpan))[0];
-            const actionValue = await (await actionValueSpan.getProperty('textContent')).jsonValue();
+            const [
+                caseClass,
+                area,
+                subject,
+                distributionDate,
+                judge,
+                actionValue
+            ] = await Promise.all([
+                this.page.$eval(this.elementsCSSSelectors.caseClass, (el) => el.textContent),
+                this.page.$eval(this.elementsCSSSelectors.area, (el) => el.textContent),
+                this.page.$eval(this.elementsCSSSelectors.subject, (el) => el.textContent),
+                this.page.$eval(this.elementsCSSSelectors.distributionDate, (el) => el.textContent),
+                this.page.$eval(this.elementsCSSSelectors.judge, (el) => el.textContent),
+                this.page.$eval(this.elementsCSSSelectors.actionValue, (el) => el.textContent),
+            ]);
 
             return {
+                degree: "first",
+                caseNumber,
                 caseClass: caseClass,
                 area: area,
                 subject: subject,
+                distributionDate: distributionDate,
+                judge: judge,
                 actionValue: actionValue
             }
         } catch (error) {
-            // console.log(error);
+            console.log(error);
             return {
+                degree: "first",
+                caseNumber,
                 caseClass: '',
                 area: '',
                 subject: '',
+                distributionDate: '',
+                judge: '',
                 actionValue: ''
             }
         }

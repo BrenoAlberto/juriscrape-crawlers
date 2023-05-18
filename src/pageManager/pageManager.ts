@@ -18,9 +18,8 @@ export class PageManager {
     }
 
     public async releasePage(page: Page) {
-        await page.close();
-        // const newPage = await this.createNewPage();
-        // this.pages.push(newPage);
+        await page.goto('about:blank');
+        this.pages.push(page);
     }
 
     private async init() {

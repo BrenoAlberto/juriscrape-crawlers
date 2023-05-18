@@ -31,7 +31,7 @@ export class SecondDegreeCaseCrawler implements CourtCrawler {
     public async scrapeCase(caseNumber: string, processNumber: string): Promise<any> {
         this.ensurePageIsInitialized();
         const caseURL = await this.secondDegreeSearchPage!.fetchCaseURL(caseNumber, processNumber);
-        const caseData = await this.secondDegreeCasePage!.fetchCaseData(caseURL);
+        const caseData = await this.secondDegreeCasePage!.fetchCaseData(caseURL, caseNumber);
         console.log(caseData)
         this.releasePage();
     }
@@ -42,17 +42,17 @@ export class SecondDegreeCaseCrawler implements CourtCrawler {
         return crawler;
     }
 }
-(
-    async () => {
-        const browser = await puppeteer.launch({ headless: false });
-        const pageManager = new PageManager(browser);
-        const crawler = await SecondDegreeCaseCrawler.create(pageManager);
-        const courtCase = "0070337-91.2008.8.06.0001"
-        const processNumber = "0070337-91.2008"
-        const start = performance.now();
-        await crawler.scrapeCase(courtCase, processNumber);
-        const end = performance.now();
-        console.log(`Time elapsed: ${(end - start) / 1000} seconds`);
-        await browser.close();
-    }
-)()
+// (
+//     async () => {
+//         const browser = await puppeteer.launch({ headless: false });
+//         const pageManager = new PageManager(browser);
+//         const crawler = await SecondDegreeCaseCrawler.create(pageManager);
+//         const courtCase = "0070337-91.2008.8.06.0001"
+//         const processNumber = "0070337-91.2008"
+//         const start = performance.now();
+//         await crawler.scrapeCase(courtCase, processNumber);
+//         const end = performance.now();
+//         console.log(`Time elapsed: ${(end - start) / 1000} seconds`);
+//         await browser.close();
+//     }
+// )()

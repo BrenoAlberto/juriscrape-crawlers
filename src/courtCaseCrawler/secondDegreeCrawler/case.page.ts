@@ -12,7 +12,7 @@ export class SecondDegreeCasePage {
 
     constructor(private readonly page: Page) { }
 
-    public async fetchCaseData(caseURL: string) {
+    public async fetchCaseData(caseURL: string, caseNumber: string) {
         try {
             await this.page.goto(caseURL);
 
@@ -33,6 +33,8 @@ export class SecondDegreeCasePage {
             const actionValue = await (await actionValueSpan.getProperty('textContent')).jsonValue();
 
             return {
+                degree: "second",
+                caseNumber,
                 caseClass: caseClass,
                 area: area,
                 subject: subject,
@@ -41,6 +43,8 @@ export class SecondDegreeCasePage {
         } catch (error) {
             // console.log(error);
             return {
+                degree: "second",
+                caseNumber,
                 caseClass: '',
                 area: '',
                 subject: '',

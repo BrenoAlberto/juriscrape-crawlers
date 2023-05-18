@@ -7,6 +7,7 @@ import { PreloadedFirstDegreePageManager } from "./pageManager/preloadedFirstDeg
 
     const browser = await puppeteer.launch({
         headless: "new",
+        // headless: false,
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',

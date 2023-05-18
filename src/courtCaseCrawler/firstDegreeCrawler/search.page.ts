@@ -6,10 +6,10 @@ export class FirstDegreeSearchPage {
         TJCE: "https://esaj.tjce.jus.br/cpopg/open.do"
     }
 
-    private readonly elementsXPathSelectors = {
-        inputCaseNumber: "//input[@id='numeroDigitoAnoUnificado']",
-        searchButton: "//input[@id='botaoConsultarProcessos']",
-        inputOriginNumber: "//input[@id='foroNumeroUnificado']",
+    private readonly elementsCSSSelectors = {
+        inputCaseNumber: "#numeroDigitoAnoUnificado",
+        searchButton: "#botaoConsultarProcessos",
+        inputOriginNumber: "#foroNumeroUnificado",
     }
 
     constructor(private readonly page: Page) { }
@@ -17,18 +17,13 @@ export class FirstDegreeSearchPage {
     public async goToCase(processNumber: string, originNumber: string, court: "TJAL" | "TJCE") {
         await this.ensureIsInSearchPage(court);
 
-        await this.page.waitForXPath(this.elementsXPathSelectors.inputCaseNumber);
-        const inputCaseNumber = (await this.page.$x(this.elementsXPathSelectors.inputCaseNumber))[0];
-        await inputCaseNumber.type(processNumber);
+        await this.page.type(this.elementsCSSSelectors.inputCaseNumber, processNumber)
+        await this.page.type(this.elementsCSSSelectors.inputOriginNumber, originNumber)
 
-
-        await this.page.waitForXPath(this.elementsXPathSelectors.inputOriginNumber);
-        const inputOriginNumber = (await this.page.$x(this.elementsXPathSelectors.inputOriginNumber))[0];
-        await inputOriginNumber.type(originNumber);
-
-        await this.page.waitForXPath(this.elementsXPathSelectors.searchButton);
-        const searchButton = (await this.page.$x(this.elementsXPathSelectors.searchButton))[0] as ElementHandle
-        await searchButton.click();
+        await Promise.all([
+            this.page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+            this.page.click(this.elementsCSSSelectors.searchButton),
+        ])
     }
 
     private async ensureIsInSearchPage(court: "TJAL" | "TJCE") {
