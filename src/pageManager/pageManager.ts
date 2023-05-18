@@ -4,7 +4,7 @@ export class PageManager {
     private pages: Page[] = [];
     private readonly poolSize: number;
 
-    constructor(private readonly puppeeterBrowser: Browser, poolSize = 1) {
+    constructor(private readonly puppeeterBrowser: Browser, poolSize = 3) {
         this.poolSize = poolSize;
         this.init();
     }
@@ -19,8 +19,8 @@ export class PageManager {
 
     public async releasePage(page: Page) {
         await page.close();
-        const newPage = await this.createNewPage();
-        this.pages.push(newPage);
+        // const newPage = await this.createNewPage();
+        // this.pages.push(newPage);
     }
 
     private async init() {

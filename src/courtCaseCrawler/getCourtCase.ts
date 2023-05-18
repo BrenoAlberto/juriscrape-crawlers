@@ -9,7 +9,7 @@ export class GetCourtCase {
         private readonly secondDegreeCaseCrawler: SecondDegreeCaseCrawler,
     ) { }
 
-    public async getCourtCase(caseNumber: string, processNumber: string, originNumber: string): Promise<any> {
+    public async execute(caseNumber: string, processNumber: string, originNumber: string): Promise<any> {
         const [firstDegreeData, secondDegreeData] = await Promise.all([
             this.firstDegreeCaseCrawler.scrapeCase(caseNumber, processNumber, originNumber),
             this.secondDegreeCaseCrawler.scrapeCase(caseNumber, processNumber),

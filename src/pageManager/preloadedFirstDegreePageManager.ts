@@ -10,7 +10,7 @@ export class PreloadedFirstDegreePageManager {
         }
     private readonly poolSize: number;
 
-    constructor(private readonly puppeeterBrowser: Browser, poolSize = 10) {
+    constructor(private readonly puppeeterBrowser: Browser, poolSize = 3) {
         this.poolSize = poolSize;
         this.init();
     }
@@ -25,8 +25,8 @@ export class PreloadedFirstDegreePageManager {
 
     public async releasePage(page: Page, court: "TJAL" | "TJCE") {
         await page.close();
-        const newPage = await this.createPreloadedFirstDegreePage(this.preloadedFirstDegreePages[court].url);
-        this.preloadedFirstDegreePages[court].pages.push(newPage);
+        // const newPage = await this.createPreloadedFirstDegreePage(this.preloadedFirstDegreePages[court].url);
+        // this.preloadedFirstDegreePages[court].pages.push(newPage);
     }
 
     private async init() {
