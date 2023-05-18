@@ -1,4 +1,5 @@
-import { ElementHandle, Page, } from "puppeteer";
+import { Page, } from "puppeteer";
+import { Court } from "../../court/model";
 
 export class FirstDegreeSearchPage {
     private urls = {
@@ -14,7 +15,7 @@ export class FirstDegreeSearchPage {
 
     constructor(private readonly page: Page) { }
 
-    public async goToCase(processNumber: string, originNumber: string, court: "TJAL" | "TJCE") {
+    public async goToCase(processNumber: string, originNumber: string, court: Court) {
         await this.ensureIsInSearchPage(court);
 
         await this.page.type(this.elementsCSSSelectors.inputCaseNumber, processNumber)
@@ -26,7 +27,7 @@ export class FirstDegreeSearchPage {
         ])
     }
 
-    private async ensureIsInSearchPage(court: "TJAL" | "TJCE") {
+    private async ensureIsInSearchPage(court: Court) {
         if (!this.page.url().startsWith(this.urls[court])) {
             await this.page.goto(this.urls[court]);
         }

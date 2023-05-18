@@ -1,26 +1,42 @@
 import { Page } from "puppeteer";
+import { Court } from "../../court/model";
 
 export class SecondDegreeSearchPage {
-    private tjalSecondDegreeURL = "https://esaj.tjce.jus.br/cposg5"
+    private urls = {
+        TJAL: "https://www2.tjal.jus.br/cposg5",
+        TJCE: "https://esaj.tjce.jus.br/cposg5"
+    }
 
-    private readonly elementsXPathSelectors = {
-        inputCaseNumber: "//input[@id='numeroDigitoAnoUnificado']",
-        searchButton: "//input[@id='botaoConsultarProcessos']",
-        selectedProcessRadioButton: '(//input[@id="processoSelecionado"])[1]'
+
+    private readonly elementsCSSSelectors = {
+        selectedProcessRadioButton: '#processoSelecionado:nth-child(1)',
+        mensagemRetorno: '#mensagemRetorno'
     }
 
     constructor(private readonly page: Page) { }
 
-    public async fetchCaseURL(caseNumber: string, processNumber: string) {
-        const url = `${this.tjalSecondDegreeURL}/search.do?conversationId=&paginaConsulta=0&cbPesquisa=NUMPROC&numeroDigitoAnoUnificado=${processNumber}&foroNumeroUnificado=0001&dePesquisaNuUnificado=${caseNumber}&dePesquisaNuUnificado=UNIFICADO&dePesquisa=&tipoNuProcesso=UNIFICADO`;
-        await this.page.goto(url);
+    public async fetchCaseURL(caseNumber: string, processNumber: string, court: Court): Promise<string> {
+        const url = `${this.urls[court]}/search.do?conversationId=&paginaConsulta=0&cbPesquisa=NUMPROC&numeroDigitoAnoUnificado=${processNumber}&foroNumeroUnificado=0001&dePesquisaNuUnificado=${caseNumber}&dePesquisaNuUnificado=UNIFICADO&dePesquisa=&tipoNuProcesso=UNIFICADO`;
+        await this.page.goto(url, { waitUntil: 'domcontentloaded' });
 
-        await this.page.waitForXPath(this.elementsXPathSelectors.selectedProcessRadioButton);
-        const selectedProcessRadioButton = (await this.page.$x(this.elementsXPathSelectors.selectedProcessRadioButton))[0];
+        await this.ensureNoWarningMessage();
 
-        const processCodeValue = await (await selectedProcessRadioButton.getProperty('value')).jsonValue();
-        const processCode = processCodeValue as string;
+        const selectedProcessRadioButton = await this.page.$(this.elementsCSSSelectors.selectedProcessRadioButton);
+        if (selectedProcessRadioButton) {
+            const processCode = await selectedProcessRadioButton.evaluate((el) => el.getAttribute('value'));
+            return `${this.urls[court]}/show.do?processo.codigo=${processCode}`;
+        } else {
+            return this.page.url();
+        }
+    }
 
-        return `${this.tjalSecondDegreeURL}/show.do?processo.codigo=${processCode}`;
+    private async ensureNoWarningMessage(): Promise<void> {
+        const warningMessage = await this.page.$(this.elementsCSSSelectors.mensagemRetorno);
+        if (warningMessage) {
+            const warningMessageText = await warningMessage.evaluate((el) => el.textContent);
+            if (warningMessageText?.includes("Não existem informações")) {
+                throw new Error('CASE NOT FOUND');
+            }
+        }
     }
 }

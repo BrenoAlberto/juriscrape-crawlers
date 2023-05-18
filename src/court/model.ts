@@ -1,42 +1,33 @@
-
-interface MovementModel {
-    date: string;
-    movement: string;
+export interface MovementModel {
+    date?: string;
+    movement?: string;
 }
 
-interface PartyModel {
-    name: string;
-    type: string;
+export interface PartyModel {
+    name?: string;
+    type?: string;
 }
 
-type Court = "TJAL" | "TJCE";
+export type Court = "TJAL" | "TJCE";
 
-type Degree = "first" | "second";
+export type CrawlStatus = "failed" | "scheduling" | "pending" | "available";
 
-export class CourtCaseModel {
+export type CaseData = {
+    court?: Court;
+    caseClass?: string;
+    area?: string;
+    subject?: string;
+    distributionDate?: string;
+    judge?: string;
+    actionValue?: number;
+    parties?: PartyModel[];
+    movements?: MovementModel[];
+}
+
+export interface CourtCaseModel {
     caseNumber: string;
-    court: Court;
-    degree: Degree;
-    caseClass: string;
-    area: string;
-    subject: string;
-    distributionDate: string;
-    judge: string;
-    actionValue: number;
-    parties: PartyModel[];
-    movements: MovementModel[];
-
-    constructor(caseNumber: string, court: Court, degree: Degree, caseClass: string, area: string, subject: string, distributionDate: string, judge: string, actionValue: number, parties: PartyModel[], movements: MovementModel[]) {
-        this.caseNumber = caseNumber;
-        this.court = court;
-        this.degree = degree;
-        this.caseClass = caseClass;
-        this.area = area;
-        this.subject = subject;
-        this.distributionDate = distributionDate;
-        this.judge = judge;
-        this.actionValue = actionValue;
-        this.parties = parties;
-        this.movements = movements;
-    }
+    firstDegreeCaseData?: CaseData;
+    secondDegreeCaseData?: CaseData;
+    failiureReason?: string;
+    crawlStatus: CrawlStatus;
 }

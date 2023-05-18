@@ -1,4 +1,5 @@
 import { Browser, Page } from "puppeteer";
+import { Court } from "../court/model";
 
 export class PreloadedFirstDegreePageManager {
     private preloadedFirstDegreePages: {
@@ -10,12 +11,11 @@ export class PreloadedFirstDegreePageManager {
         }
     private readonly poolSize: number;
 
-    constructor(private readonly puppeeterBrowser: Browser, poolSize = 3) {
+    private constructor(private readonly puppeeterBrowser: Browser, poolSize: number) {
         this.poolSize = poolSize;
-        this.init();
     }
 
-    public async acquirePage(court: "TJAL" | "TJCE"): Promise<Page> {
+    public async acquirePage(court: Court): Promise<Page> {
         if (this.preloadedFirstDegreePages[court].pages.length === 0) {
             return this.createPreloadedFirstDegreePage(this.preloadedFirstDegreePages[court].url);
         } else {
@@ -23,7 +23,7 @@ export class PreloadedFirstDegreePageManager {
         }
     }
 
-    public async releasePage(page: Page, court: "TJAL" | "TJCE") {
+    public async releasePage(page: Page, court: Court) {
         await page.goto(this.preloadedFirstDegreePages[court].url);
         this.preloadedFirstDegreePages[court].pages.push(page);
     }
@@ -53,5 +53,11 @@ export class PreloadedFirstDegreePageManager {
         const newPage = await this.createNewPage();
         await newPage.goto(preloadFirstDegreeUrl);
         return newPage;
+    }
+
+    public static async create(puppeeterBrowser: Browser, poolSize = 10) {
+        const preloadedFirstDegreePageManager = new PreloadedFirstDegreePageManager(puppeeterBrowser, poolSize);
+        await preloadedFirstDegreePageManager.init();
+        return preloadedFirstDegreePageManager;
     }
 }
