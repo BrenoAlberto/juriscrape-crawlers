@@ -1,5 +1,6 @@
 import { Browser, Page } from "puppeteer";
 import { Court } from "../court/model";
+import { generalSettings } from "../setup";
 
 export class PreloadedFirstDegreePageManager {
     private preloadedFirstDegreePages: {
@@ -55,7 +56,7 @@ export class PreloadedFirstDegreePageManager {
         return newPage;
     }
 
-    public static async create(puppeeterBrowser: Browser, poolSize = 10) {
+    public static async create(puppeeterBrowser: Browser, poolSize = generalSettings.preloadedFirstDegreePagesPerCourt) {
         const preloadedFirstDegreePageManager = new PreloadedFirstDegreePageManager(puppeeterBrowser, poolSize);
         await preloadedFirstDegreePageManager.init();
         return preloadedFirstDegreePageManager;

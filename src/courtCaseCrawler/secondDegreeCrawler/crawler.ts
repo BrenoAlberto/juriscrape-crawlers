@@ -34,13 +34,17 @@ export class SecondDegreeCaseCrawler implements CourtCrawler {
 
     public async scrapeCase(caseNumber: string, processNumber: string): Promise<any> {
         this.ensurePageIsInitialized();
+        const startPerf = performance.now();
         try {
             const caseURL = await this.secondDegreeSearchPage!.fetchCaseURL(caseNumber, processNumber, this.court);
             const caseData = await this.secondDegreeCasePage!.fetchCaseData(caseURL, caseNumber);
+            const endPerf = performance.now();
+            console.log(`Case ${caseNumber} took ${endPerf - startPerf} milliseconds to scrape.`);
             this.releasePage();
             return caseData;
         } catch (error) {
-            console.log(error);
+            const endPerf = performance.now();
+            console.log(`Case ${processNumber} took ${endPerf - startPerf} milliseconds to scrape - NO DATA.`);
             this.releasePage();
         }
     }

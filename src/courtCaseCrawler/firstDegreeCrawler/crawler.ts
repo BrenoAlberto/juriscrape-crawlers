@@ -16,14 +16,18 @@ export class FirstDegreeCaseCrawler implements CourtCrawler {
     ) { }
 
     public async scrapeCase(_caseNumber: string, processNumber: string, originNumber: string): Promise<any> {
+        this.ensurePageIsInitialized();
+        const startPerf = performance.now();
         try {
-            this.ensurePageIsInitialized();
             await this.firstDegreeSearchPage!.goToCase(processNumber, originNumber, this.court);
             const caseData = await this.firstDegreeCasePage!.fetchCaseData();
+            const endPerf = performance.now();
+            console.log(`Case ${processNumber} took ${endPerf - startPerf} milliseconds to scrape.`);
             this.releasePage();
             return caseData;
         } catch (error) {
-            console.log(error);
+            const endPerf = performance.now();
+            console.log(`Case ${processNumber} took ${endPerf - startPerf} milliseconds to scrape - NO DATA.`);
             this.releasePage();
         }
     }

@@ -1,4 +1,5 @@
 import { Browser, Page } from "puppeteer";
+import { generalSettings } from "../setup";
 
 export class PageManager {
     private pages: Page[] = [];
@@ -34,7 +35,7 @@ export class PageManager {
         return newBrowserContext.newPage();
     }
 
-    public static async create(puppeeterBrowser: Browser, poolSize = 10) {
+    public static async create(puppeeterBrowser: Browser, poolSize = generalSettings.preloadedEmptyPages) {
         const pageManager = new PageManager(puppeeterBrowser, poolSize);
         await pageManager.init();
         return pageManager;

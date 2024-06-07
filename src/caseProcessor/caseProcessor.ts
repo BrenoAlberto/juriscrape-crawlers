@@ -2,6 +2,7 @@ import { Court, CourtCaseModel } from "../court/model";
 import { GetCourtCase } from "../courtCaseCrawler/getCourtCase";
 import { PageManager } from "../pageManager/pageManager";
 import { PreloadedFirstDegreePageManager } from "../pageManager/preloadedFirstDegreePageManager";
+import { generalSettings } from "../setup";
 import { concurrentTaskQueue } from "../utils/promise";
 
 export interface CrawlCourtCase {
@@ -14,9 +15,9 @@ export interface CrawlCourtCase {
 export class CourtCaseProcessor {
     private readonly courtCaseQueue: CrawlCourtCase[] = [];
     private readonly processedCourtCases: CourtCaseModel[] = [];
-    private readonly workerLimit = 1000;
-    private readonly concurrencyLimit = 10;
-    private readonly delay = 2000;
+    private readonly workerLimit = generalSettings.backgroundQueueCrawlLimit;
+    private readonly concurrencyLimit = generalSettings.backgroundConcurrencyCrawlLimit;
+    private readonly delay = generalSettings.emptyQueueDelay;
     private isProcessing = false;
     private intervalId?: NodeJS.Timeout;
 
@@ -27,7 +28,7 @@ export class CourtCaseProcessor {
 
     public async startProcessing() {
         this.isProcessing = true;
-        this.intervalId = setInterval(() => this.sendProcessedCourtCases(), 2000); // Sends the processed court cases every 2 seconds to the API
+        this.intervalId = setInterval(() => this.sendProcessedCourtCases(), generalSettings.saveProcessedCasesInterval); // Sends the processed court cases every 10 seconds to the API
         while (this.isProcessing && this.courtCaseQueue.length < this.workerLimit) {
             try {
                 await this.processCourtCases();
@@ -54,13 +55,19 @@ export class CourtCaseProcessor {
             const casesToSend = this.processedCourtCases.splice(0, this.processedCourtCases.length);
 
             try {
-                await fetch(`${process.env.TJ_API_URL!}/insert-court-cases`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(casesToSend),
-                });
+                const promises: (() => Promise<void>)[] = [];
+                for (const caseToSend of casesToSend) {
+                    promises.push(async () => {
+                        await fetch(`${process.env.TJ_API_URL!}/insert-court-cases`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify([caseToSend]),
+                        });
+                    })
+                }
+                await concurrentTaskQueue(promises, generalSettings.saveProcessedCasesConcurrencyLimit);
             } catch (error) {
                 console.error(`Failed to send processed court cases: ${error}`);
                 this.processedCourtCases.unshift(...casesToSend);
