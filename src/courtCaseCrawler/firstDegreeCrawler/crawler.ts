@@ -22,12 +22,12 @@ export class FirstDegreeCaseCrawler implements CourtCrawler {
             await this.firstDegreeSearchPage!.goToCase(processNumber, originNumber, this.court);
             const caseData = await this.firstDegreeCasePage!.fetchCaseData();
             const endPerf = performance.now();
-            console.log(`Case ${processNumber} took ${endPerf - startPerf} milliseconds to scrape.`);
+            console.log(`Case ${processNumber} took ${(endPerf - startPerf) / 1000} seconds to scrape.`);
             this.releasePage();
             return caseData;
         } catch (error) {
             const endPerf = performance.now();
-            console.log(`Case ${processNumber} took ${endPerf - startPerf} milliseconds to scrape - NO DATA.`);
+            console.log(`Case ${processNumber} took ${(endPerf - startPerf) / 1000} seconds to scrape - NO DATA.`);
             this.releasePage();
         }
     }

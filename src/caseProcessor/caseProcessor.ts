@@ -29,7 +29,7 @@ export class CourtCaseProcessor {
     public async startProcessing() {
         this.isProcessing = true;
         this.intervalId = setInterval(() => this.sendProcessedCourtCases(), generalSettings.saveProcessedCasesInterval); // Sends the processed court cases every 10 seconds to the API
-        console.log(`Processing court cases with`)
+        console.log(`Processing court cases with the following settings:`);
         console.table({
             workerLimit: this.workerLimit,
             concurrencyLimit: this.concurrencyLimit,
@@ -37,7 +37,6 @@ export class CourtCaseProcessor {
             queueSize: this.courtCaseQueue.length,
         });
         while (this.isProcessing && this.courtCaseQueue.length < this.workerLimit) {
-            console.log('Processing court cases')
             try {
                 await this.processCourtCases();
             } catch (error) {
@@ -89,7 +88,8 @@ export class CourtCaseProcessor {
 
     private async processCourtCases(): Promise<void> {
         if (this.courtCaseQueue.length > 0) {
-            console.log(`Processing ${this.workerLimit} court cases`)
+            console.log(`In queue: ${this.courtCaseQueue.length} court cases`);
+            console.log(`Processing up to ${this.workerLimit} court cases`)
             const tasks = this.courtCaseQueue.splice(0, this.workerLimit).map(courtCase =>
                 async () => {
                     try {
