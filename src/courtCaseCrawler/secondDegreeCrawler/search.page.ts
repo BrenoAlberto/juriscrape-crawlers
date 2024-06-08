@@ -16,6 +16,7 @@ export class SecondDegreeSearchPage {
     constructor(private readonly page: Page) { }
 
     public async fetchCaseURL(caseNumber: string, processNumber: string, court: Court): Promise<string> {
+        console.log(`Fetching case URL for ${caseNumber} in ${court}`)
         const url = `${this.urls[court]}/search.do?conversationId=&paginaConsulta=0&cbPesquisa=NUMPROC&numeroDigitoAnoUnificado=${processNumber}&foroNumeroUnificado=0001&dePesquisaNuUnificado=${caseNumber}&dePesquisaNuUnificado=UNIFICADO&dePesquisa=&tipoNuProcesso=UNIFICADO`;
         await this.page.goto(url, { waitUntil: 'domcontentloaded' });
 
@@ -38,5 +39,6 @@ export class SecondDegreeSearchPage {
                 throw new Error('CASE NOT FOUND');
             }
         }
+        console.log('No warning message found');
     }
 }

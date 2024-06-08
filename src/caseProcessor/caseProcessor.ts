@@ -29,7 +29,15 @@ export class CourtCaseProcessor {
     public async startProcessing() {
         this.isProcessing = true;
         this.intervalId = setInterval(() => this.sendProcessedCourtCases(), generalSettings.saveProcessedCasesInterval); // Sends the processed court cases every 10 seconds to the API
+        console.log(`Processing court cases with`)
+        console.table({
+            workerLimit: this.workerLimit,
+            concurrencyLimit: this.concurrencyLimit,
+            delay: this.delay,
+            queueSize: this.courtCaseQueue.length,
+        });
         while (this.isProcessing && this.courtCaseQueue.length < this.workerLimit) {
+            console.log('Processing court cases')
             try {
                 await this.processCourtCases();
             } catch (error) {
@@ -39,6 +47,7 @@ export class CourtCaseProcessor {
     }
 
     public stopProcessing() {
+        console.log('Stopping court case processing');
         this.isProcessing = false;
         if (this.intervalId) {
             clearInterval(this.intervalId);
@@ -47,12 +56,15 @@ export class CourtCaseProcessor {
     }
 
     public addCourtCases(courtCases: CrawlCourtCase[]) {
+        console.log(`Adding ${courtCases.length} court cases to the queue`);
         this.courtCaseQueue.push(...courtCases);
     }
 
     private async sendProcessedCourtCases() {
         if (this.processedCourtCases.length > 0) {
             const casesToSend = this.processedCourtCases.splice(0, this.processedCourtCases.length);
+
+            console.log(`Sending ${casesToSend.length} processed court cases`);
 
             try {
                 const promises: (() => Promise<void>)[] = [];
@@ -77,6 +89,7 @@ export class CourtCaseProcessor {
 
     private async processCourtCases(): Promise<void> {
         if (this.courtCaseQueue.length > 0) {
+            console.log(`Processing ${this.workerLimit} court cases`)
             const tasks = this.courtCaseQueue.splice(0, this.workerLimit).map(courtCase =>
                 async () => {
                     try {

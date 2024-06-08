@@ -16,11 +16,15 @@ export class FirstDegreeSearchPage {
     constructor(private readonly page: Page) { }
 
     public async goToCase(processNumber: string, originNumber: string, court: Court) {
+        console.log(`Going to case ${processNumber} in ${court}`)
         await this.ensureIsInSearchPage(court);
 
+        console.log(`Typing case number ${processNumber}`)
         await this.page.type(this.elementsCSSSelectors.inputCaseNumber, processNumber)
+        console.log(`Typing origin number ${originNumber}`)
         await this.page.type(this.elementsCSSSelectors.inputOriginNumber, originNumber)
 
+        console.log(`Clicking search button`)
         await Promise.all([
             this.page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
             this.page.click(this.elementsCSSSelectors.searchButton),
@@ -28,6 +32,7 @@ export class FirstDegreeSearchPage {
     }
 
     private async ensureIsInSearchPage(court: Court) {
+        console.log(`Ensuring is in search page for ${court}`)
         if (!this.page.url().startsWith(this.urls[court])) {
             await this.page.goto(this.urls[court]);
         }

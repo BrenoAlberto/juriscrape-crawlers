@@ -17,6 +17,7 @@ export class PreloadedFirstDegreePageManager {
     }
 
     public async acquirePage(court: Court): Promise<Page> {
+        console.log('Acquiring preloaded page')
         if (this.preloadedFirstDegreePages[court].pages.length === 0) {
             return this.createPreloadedFirstDegreePage(this.preloadedFirstDegreePages[court].url);
         } else {
@@ -46,6 +47,7 @@ export class PreloadedFirstDegreePageManager {
     }
 
     private async createNewPage() {
+        console.log('Creating new preloaded page')
         const newBrowserContext = await this.puppeeterBrowser.createIncognitoBrowserContext();
         return newBrowserContext.newPage();
     }
@@ -57,6 +59,7 @@ export class PreloadedFirstDegreePageManager {
     }
 
     public static async create(puppeeterBrowser: Browser, poolSize = generalSettings.preloadedFirstDegreePagesPerCourt) {
+        console.log('Creating new preloaded first degree page manager')
         const preloadedFirstDegreePageManager = new PreloadedFirstDegreePageManager(puppeeterBrowser, poolSize);
         await preloadedFirstDegreePageManager.init();
         return preloadedFirstDegreePageManager;
