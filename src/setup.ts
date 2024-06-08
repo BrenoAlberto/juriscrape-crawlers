@@ -1,11 +1,11 @@
 export const generalSettings = {
-    "backgroundQueueCrawlLimit": 1000, 
-    "backgroundConcurrencyCrawlLimit": 10,  // Careful with rate limiting 
-    "saveProcessedCasesInterval": 3000, 
-    "saveProcessedCasesConcurrencyLimit": 5, 
-    "preloadedEmptyPages": 1, // Careful with CPU and memory usage
-    "preloadedFirstDegreePagesPerCourt": 1, // Careful with CPU and memory usage
-    "emptyQueueDelay": 2000,
+  backgroundQueueCrawlLimit: 1000,
+  backgroundConcurrencyCrawlLimit: 10, // Careful with rate limiting
+  saveProcessedCasesInterval: 3000,
+  saveProcessedCasesConcurrencyLimit: 5,
+  preloadedEmptyPages: 1, // Careful with CPU and memory usage
+  preloadedFirstDegreePagesPerCourt: 1, // Careful with CPU and memory usage
+  emptyQueueDelay: 2000
 }
 
 /**

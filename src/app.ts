@@ -1,33 +1,33 @@
-require('dotenv').config();
+import puppeteer from 'puppeteer'
+import { CourtCaseProcessor } from './caseProcessor/caseProcessor'
+import { PageManager } from './pageManager/pageManager'
+import { PreloadedFirstDegreePageManager } from './pageManager/preloadedFirstDegreePageManager'
 
-import puppeteer from "puppeteer";
-import { CourtCaseProcessor } from "./caseProcessor/caseProcessor";
-import { PageManager } from "./pageManager/pageManager";
-import { PreloadedFirstDegreePageManager } from "./pageManager/preloadedFirstDegreePageManager";
+import express from 'express'
+import { CourtCaseCrawlerController } from './courtCaseCrawler/controller'
 
+import dotenv from 'dotenv'
+dotenv.config()
 
-import express from 'express';
-import { CourtCaseCrawlerController } from "./courtCaseCrawler/controller";
-
-const app = express();
-app.use(express.json());
+const app = express()
+app.use(express.json())
 
 puppeteer.launch({
-    headless: "new",
-    args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-    ]
+  headless: 'new',
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox'
+  ]
 }).then(async browser => {
-    const pageManager = await PageManager.create(browser);
-    const preloadedFirstDegreePageManager = await PreloadedFirstDegreePageManager.create(browser)
+  const pageManager = await PageManager.create(browser)
+  const preloadedFirstDegreePageManager = await PreloadedFirstDegreePageManager.create(browser)
 
-    const courtCaseProcessor = new CourtCaseProcessor(pageManager, preloadedFirstDegreePageManager);
-    courtCaseProcessor.startProcessing();
+  const courtCaseProcessor = new CourtCaseProcessor(pageManager, preloadedFirstDegreePageManager)
+  void courtCaseProcessor.startProcessing()
 
-    const courtCaseCrawlerController = new CourtCaseCrawlerController(courtCaseProcessor);
+  const courtCaseCrawlerController = new CourtCaseCrawlerController(courtCaseProcessor)
 
-    app.post('/crawl-court-cases', (req, res) => courtCaseCrawlerController.crawlCourtCases(req, res));
+  app.post('/crawl-court-cases', async (req, res) => await courtCaseCrawlerController.crawlCourtCases(req, res))
 
-    app.listen(3008, () => console.log('Server is running on port 3008'));
-})
+  app.listen(3008, () => { console.log('Server is running on port 3008') })
+}).catch(console.error)
