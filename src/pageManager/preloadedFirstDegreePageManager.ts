@@ -1,6 +1,7 @@
 import { type Browser, type Page } from 'puppeteer'
 import { type Court } from '../court/model'
 import { generalSettings } from '../setup'
+import { logger } from '@tjcommon/common'
 
 export class PreloadedFirstDegreePageManager {
   private readonly preloadedFirstDegreePages: {
@@ -18,7 +19,7 @@ export class PreloadedFirstDegreePageManager {
   }
 
   public async acquirePage (court: Court): Promise<Page> {
-    console.log('Acquiring preloaded page')
+    logger.info('Acquiring preloaded page')
     if (this.preloadedFirstDegreePages[court].pages.length === 0) {
       return await this.createPreloadedFirstDegreePage(this.preloadedFirstDegreePages[court].url)
     } else {
@@ -48,7 +49,7 @@ export class PreloadedFirstDegreePageManager {
   }
 
   private async createNewPage (): Promise<Page> {
-    console.log('Creating new preloaded page')
+    logger.info('Creating new preloaded page')
     const newBrowserContext = await this.puppeeterBrowser.createIncognitoBrowserContext()
     return await newBrowserContext.newPage()
   }
@@ -60,7 +61,7 @@ export class PreloadedFirstDegreePageManager {
   }
 
   public static async create (puppeeterBrowser: Browser, poolSize = generalSettings.preloadedFirstDegreePagesPerCourt): Promise<PreloadedFirstDegreePageManager> {
-    console.log('Creating new preloaded first degree page manager')
+    logger.info('Creating new preloaded first degree page manager')
     const preloadedFirstDegreePageManager = new PreloadedFirstDegreePageManager(puppeeterBrowser, poolSize)
     await preloadedFirstDegreePageManager.init()
     return preloadedFirstDegreePageManager

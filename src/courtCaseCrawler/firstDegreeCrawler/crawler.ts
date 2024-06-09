@@ -4,6 +4,7 @@ import { FirstDegreeSearchPage } from './search.page'
 import { FirstDegreeCasePage } from './case.page'
 import { type PreloadedFirstDegreePageManager } from '../../pageManager/preloadedFirstDegreePageManager'
 import { type Court } from '../../court/model'
+import { logger } from '@tjcommon/common'
 
 export class FirstDegreeCaseCrawler implements CourtCrawler {
   private firstDegreeSearchPage: FirstDegreeSearchPage | undefined
@@ -22,12 +23,12 @@ export class FirstDegreeCaseCrawler implements CourtCrawler {
       await this.firstDegreeSearchPage!.goToCase(processNumber, originNumber, this.court)
       const caseData = await this.firstDegreeCasePage!.fetchCaseData()
       const endPerf = performance.now()
-      console.log(`Case ${processNumber} took ${(endPerf - startPerf) / 1000} seconds to scrape.`)
+      logger.info(`Case ${processNumber} took ${(endPerf - startPerf) / 1000} seconds to scrape.`)
       this.releasePage()
       return caseData
     } catch (error) {
       const endPerf = performance.now()
-      console.log(`Case ${processNumber} took ${(endPerf - startPerf) / 1000} seconds to scrape - NO DATA.`)
+      logger.info(`Case ${processNumber} took ${(endPerf - startPerf) / 1000} seconds to scrape - NO DATA.`)
       this.releasePage()
     }
   }

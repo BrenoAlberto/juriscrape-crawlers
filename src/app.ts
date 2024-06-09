@@ -7,6 +7,7 @@ import express from 'express'
 import { CourtCaseCrawlerController } from './courtCaseCrawler/controller'
 
 import dotenv from 'dotenv'
+import { logger } from '@tjcommon/common'
 dotenv.config()
 
 const app = express()
@@ -29,5 +30,5 @@ puppeteer.launch({
 
   app.post('/crawl-court-cases', async (req, res) => await courtCaseCrawlerController.crawlCourtCases(req, res))
 
-  app.listen(3008, () => { console.log('Server is running on port 3008') })
-}).catch(console.error)
+  app.listen(3008, () => { logger.info('Server is running on port 3008') })
+}).catch(logger.error)

@@ -1,5 +1,6 @@
 import { type Page } from 'puppeteer'
 import { type Court } from '../../court/model'
+import { logger } from '@tjcommon/common'
 
 export class SecondDegreeSearchPage {
   private readonly urls = {
@@ -15,7 +16,7 @@ export class SecondDegreeSearchPage {
   constructor (private readonly page: Page) { }
 
   public async fetchCaseURL (caseNumber: string, processNumber: string, court: Court): Promise<string> {
-    console.log(`Fetching case URL for ${caseNumber} in ${court}`)
+    logger.info(`Fetching case URL for ${caseNumber} in ${court}`)
     const url = `${this.urls[court]}/search.do?conversationId=&paginaConsulta=0&cbPesquisa=NUMPROC&numeroDigitoAnoUnificado=${processNumber}&foroNumeroUnificado=0001&dePesquisaNuUnificado=${caseNumber}&dePesquisaNuUnificado=UNIFICADO&dePesquisa=&tipoNuProcesso=UNIFICADO`
     await this.page.goto(url, { waitUntil: 'domcontentloaded' })
 
@@ -38,6 +39,6 @@ export class SecondDegreeSearchPage {
         throw new Error('CASE NOT FOUND')
       }
     }
-    console.log('No warning message found')
+    logger.info('No warning message found')
   }
 }

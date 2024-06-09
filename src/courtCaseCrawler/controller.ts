@@ -1,6 +1,7 @@
 import { type Request, type Response } from 'express'
 
 import { type CourtCaseProcessor, type CrawlCourtCase } from '../caseProcessor/caseProcessor'
+import { logger } from '@tjcommon/common'
 
 export class CourtCaseCrawlerController {
   constructor (
@@ -13,7 +14,7 @@ export class CourtCaseCrawlerController {
       this.courtCaseProcessor.addCourtCases(courtCases)
       return res.status(200).send({ message: 'Court cases added to the queue' })
     } catch (error) {
-      console.log(error)
+      logger.error(error)
       return res.status(500).send({ message: 'Internal server error' })
     }
   }

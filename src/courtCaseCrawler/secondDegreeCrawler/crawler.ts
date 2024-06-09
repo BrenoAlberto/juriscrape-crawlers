@@ -4,6 +4,7 @@ import { SecondDegreeCasePage } from './case.page'
 import { SecondDegreeSearchPage } from './search.page'
 import { type PageManager } from '../../pageManager/pageManager'
 import { type Court } from '../../court/model'
+import { logger } from '@tjcommon/common'
 
 export class SecondDegreeCaseCrawler implements CourtCrawler {
   private secondDegreeSearchPage: SecondDegreeSearchPage | undefined
@@ -40,12 +41,12 @@ export class SecondDegreeCaseCrawler implements CourtCrawler {
       const caseURL = await this.secondDegreeSearchPage!.fetchCaseURL(caseNumber, processNumber, this.court)
       const caseData = await this.secondDegreeCasePage!.fetchCaseData(caseURL, caseNumber)
       const endPerf = performance.now()
-      console.log(`Case ${caseNumber} took ${(endPerf - startPerf) / 1000} seconds to scrape.`)
+      logger.info(`Case ${caseNumber} took ${(endPerf - startPerf) / 1000} seconds to scrape.`)
       this.releasePage()
       return caseData
     } catch (error) {
       const endPerf = performance.now()
-      console.log(`Case ${processNumber} took ${(endPerf - startPerf) / 1000} seconds to scrape - NO DATA.`)
+      logger.info(`Case ${processNumber} took ${(endPerf - startPerf) / 1000} seconds to scrape - NO DATA.`)
       this.releasePage()
     }
   }

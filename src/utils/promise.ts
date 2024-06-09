@@ -1,3 +1,5 @@
+import { logger } from '@tjcommon/common'
+
 /**
  * @description Executes an array of async functions concurrently, up to a maximum number at a time.
  *
@@ -21,7 +23,7 @@ export async function concurrentTaskQueue<T> (
     try {
       results[index] = await tasks[index]()
     } catch (error) {
-      console.error(`Error executing task at index ${index}:`, error)
+      logger.error(`Error executing task at index ${index}:`, error)
     }
   }
 

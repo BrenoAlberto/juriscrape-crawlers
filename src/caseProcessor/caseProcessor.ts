@@ -1,5 +1,6 @@
 import { type Court, type CourtCaseModel } from '../court/model'
 import { GetCourtCase } from '../courtCaseCrawler/getCourtCase'
+import { logger } from '@tjcommon/common'
 import { type PageManager } from '../pageManager/pageManager'
 import { type PreloadedFirstDegreePageManager } from '../pageManager/preloadedFirstDegreePageManager'
 import { generalSettings } from '../setup'
@@ -29,24 +30,24 @@ export class CourtCaseProcessor {
   public async startProcessing (): Promise<void> {
     this.isProcessing = true
     this.intervalId = setInterval(async () => { await this.sendProcessedCourtCases() }, generalSettings.saveProcessedCasesInterval) // Sends the processed court cases every 10 seconds to the API
-    console.log('Processing court cases with the following settings:')
-    console.table({
+    logger.info('Processing court cases with the following settings:')
+    logger.info(JSON.stringify({
       workerLimit: this.workerLimit,
       concurrencyLimit: this.concurrencyLimit,
       delay: this.delay,
       queueSize: this.courtCaseQueue.length
-    })
+    }))
     while (this.isProcessing && this.courtCaseQueue.length < this.workerLimit) {
       try {
         await this.processCourtCases()
       } catch (error) {
-        console.error('Error during court case processing', error)
+        logger.error('Error during court case processing', error)
       }
     }
   }
 
   public stopProcessing (): void {
-    console.log('Stopping court case processing')
+    logger.info('Stopping court case processing')
     this.isProcessing = false
     if (this.intervalId) {
       clearInterval(this.intervalId)
@@ -55,7 +56,7 @@ export class CourtCaseProcessor {
   }
 
   public addCourtCases (courtCases: CrawlCourtCase[]): void {
-    console.log(`Adding ${courtCases.length} court cases to the queue`)
+    logger.info(`Adding ${courtCases.length} court cases to the queue`)
     this.courtCaseQueue.push(...courtCases)
   }
 
@@ -63,7 +64,7 @@ export class CourtCaseProcessor {
     if (this.processedCourtCases.length > 0) {
       const casesToSend = this.processedCourtCases.splice(0, this.processedCourtCases.length)
 
-      console.log(`Sending ${casesToSend.length} processed court cases`)
+      logger.info(`Sending ${casesToSend.length} processed court cases`)
 
       try {
         const promises: Array<() => Promise<void>> = []
@@ -80,7 +81,7 @@ export class CourtCaseProcessor {
         }
         await concurrentTaskQueue(promises, generalSettings.saveProcessedCasesConcurrencyLimit)
       } catch (error) {
-        console.error('Failed to send processed court cases: ', error)
+        logger.error('Failed to send processed court cases: ', error)
         this.processedCourtCases.unshift(...casesToSend)
       }
     }
@@ -88,8 +89,8 @@ export class CourtCaseProcessor {
 
   private async processCourtCases (): Promise<void> {
     if (this.courtCaseQueue.length > 0) {
-      console.log(`In queue: ${this.courtCaseQueue.length} court cases`)
-      console.log(`Processing up to ${this.workerLimit} court cases`)
+      logger.info(`In queue: ${this.courtCaseQueue.length} court cases`)
+      logger.info(`Processing up to ${this.workerLimit} court cases`)
       const tasks = this.courtCaseQueue.splice(0, this.workerLimit).map(courtCase =>
         async () => {
           try {
@@ -100,7 +101,7 @@ export class CourtCaseProcessor {
             )
             this.processedCourtCases.push(await getCourtCase.execute(courtCase.caseNumber, courtCase.processNumber, courtCase.originNumber))
           } catch (error) {
-            console.error('Failed to get court case: ', error)
+            logger.error('Failed to get court case: ', error)
             this.processedCourtCases.push({
               caseNumber: courtCase.caseNumber,
               crawlStatus: 'failed'

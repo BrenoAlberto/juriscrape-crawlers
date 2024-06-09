@@ -1,5 +1,6 @@
 import { type Browser, type Page } from 'puppeteer'
 import { generalSettings } from '../setup'
+import { logger } from '@tjcommon/common'
 
 export class PageManager {
   private pages: Page[] = []
@@ -10,7 +11,7 @@ export class PageManager {
   }
 
   public async acquirePage (): Promise<Page> {
-    console.log('Acquiring page')
+    logger.info('Acquiring page')
     if (this.pages.length === 0) {
       return await this.createNewPage()
     } else {
@@ -19,7 +20,7 @@ export class PageManager {
   }
 
   public async releasePage (page: Page): Promise<void> {
-    console.log('Releasing page')
+    logger.info('Releasing page')
     await page.goto('about:blank')
     this.pages.push(page)
   }
@@ -33,13 +34,13 @@ export class PageManager {
   }
 
   private async createNewPage (): Promise<Page> {
-    console.log('Creating new page')
+    logger.info('Creating new page')
     const newBrowserContext = await this.puppeeterBrowser.createIncognitoBrowserContext()
     return await newBrowserContext.newPage()
   }
 
   public static async create (puppeeterBrowser: Browser, poolSize = generalSettings.preloadedEmptyPages): Promise<PageManager> {
-    console.log('Creating new page manager')
+    logger.info('Creating new page manager')
     const pageManager = new PageManager(puppeeterBrowser, poolSize)
     await pageManager.init()
     return pageManager
