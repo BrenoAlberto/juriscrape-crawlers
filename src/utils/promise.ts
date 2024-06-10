@@ -1,4 +1,4 @@
-import { logger } from '@tjcommon/common'
+import { logger } from '@juriscrape/common'
 
 /**
  * @description Executes an array of async functions concurrently, up to a maximum number at a time.

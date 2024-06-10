@@ -1,7 +1,7 @@
 import { type Request, type Response } from 'express'
 
 import { type CourtCaseProcessor, type CrawlCourtCase } from '../caseProcessor/caseProcessor'
-import { logger } from '@tjcommon/common'
+import { logger } from '@juriscrape/common'
 
 export class CourtCaseCrawlerController {
   constructor (

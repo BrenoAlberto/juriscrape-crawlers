@@ -1,8 +1,7 @@
 import { type Court, type CourtCaseModel } from '../court/model'
 import { GetCourtCase } from '../courtCaseCrawler/getCourtCase'
-import { logger } from '@tjcommon/common'
-import { type PageManager } from '../pageManager/pageManager'
-import { type PreloadedPageManager } from '../pageManager/preloadedPageManager'
+import { logger } from '@juriscrape/common'
+import { type PageManager, type PreloadedPageManager } from '@juriscrape/driver'
 import { generalSettings } from '../setup'
 import { concurrentTaskQueue } from '../utils/promise'
 

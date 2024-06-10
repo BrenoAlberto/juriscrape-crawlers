@@ -1,13 +1,13 @@
 import puppeteer from 'puppeteer'
 import { CourtCaseProcessor } from './caseProcessor/caseProcessor'
-import { PageManager } from './pageManager/pageManager'
-import { PreloadedPageManager } from './pageManager/preloadedPageManager'
+import { PageManager, PreloadedPageManager } from '@juriscrape/driver'
 
 import express from 'express'
 import { CourtCaseCrawlerController } from './courtCaseCrawler/controller'
 
 import dotenv from 'dotenv'
-import { logger } from '@tjcommon/common'
+import { logger } from '@juriscrape/common'
+import { generalSettings } from './setup'
 dotenv.config()
 
 const app = express()
@@ -20,12 +20,12 @@ puppeteer.launch({
     '--disable-setuid-sandbox'
   ]
 }).then(async browser => {
-  const pageManager = await PageManager.create(browser)
+  const pageManager = await PageManager.create(browser, generalSettings.preloadedEmptyPages)
 
   const preloadedPageManager = await PreloadedPageManager.create(browser, {
     tjal: { url: 'https://www2.tjal.jus.br/cpopg/open.do' },
     tjce: { url: 'https://esaj.tjce.jus.br/cpopg/open.do' }
-  })
+  }, generalSettings.preloadedPagesPerCourt)
 
   const courtCaseProcessor = new CourtCaseProcessor(pageManager, preloadedPageManager)
   void courtCaseProcessor.startProcessing()

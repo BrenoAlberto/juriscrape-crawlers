@@ -1,7 +1,6 @@
 import { FirstDegreeCaseCrawler } from './firstDegreeCrawler/crawler'
 import { SecondDegreeCaseCrawler } from './secondDegreeCrawler/crawler'
-import { type PreloadedPageManager } from '../pageManager/preloadedPageManager'
-import { type PageManager } from '../pageManager/pageManager'
+import { type PageManager, type PreloadedPageManager } from '@juriscrape/driver'
 import { type Court, type CourtCaseModel } from '../court/model'
 
 export class GetCourtCase {

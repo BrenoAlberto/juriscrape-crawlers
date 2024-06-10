@@ -1,6 +1,6 @@
 import { type Page } from 'puppeteer'
 import { type Court } from '../../court/model'
-import { logger } from '@tjcommon/common'
+import { logger } from '@juriscrape/common'
 
 export class FirstDegreeSearchPage {
   private readonly urls = {

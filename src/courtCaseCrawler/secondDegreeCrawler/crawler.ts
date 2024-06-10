@@ -2,9 +2,9 @@ import { type Page } from 'puppeteer'
 import { type CourtCrawler } from '../../court/crawler'
 import { SecondDegreeCasePage } from './case.page'
 import { SecondDegreeSearchPage } from './search.page'
-import { type PageManager } from '../../pageManager/pageManager'
+import { type PageManager } from '@juriscrape/driver'
 import { type Court } from '../../court/model'
-import { logger } from '@tjcommon/common'
+import { logger } from '@juriscrape/common'
 
 export class SecondDegreeCaseCrawler implements CourtCrawler {
   private secondDegreeSearchPage: SecondDegreeSearchPage | undefined
