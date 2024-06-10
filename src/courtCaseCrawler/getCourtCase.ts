@@ -1,6 +1,6 @@
 import { FirstDegreeCaseCrawler } from './firstDegreeCrawler/crawler'
 import { SecondDegreeCaseCrawler } from './secondDegreeCrawler/crawler'
-import { type PreloadedFirstDegreePageManager } from '../pageManager/preloadedFirstDegreePageManager'
+import { type PreloadedPageManager } from '../pageManager/preloadedPageManager'
 import { type PageManager } from '../pageManager/pageManager'
 import { type Court, type CourtCaseModel } from '../court/model'
 
@@ -24,8 +24,8 @@ export class GetCourtCase {
     }
   }
 
-  public static async create (pageManager: PageManager, preloadedFirstDegreePageManager: PreloadedFirstDegreePageManager, court: Court): Promise<GetCourtCase> {
-    const firstDegreeCaseCrawler = await FirstDegreeCaseCrawler.create(preloadedFirstDegreePageManager, court)
+  public static async create (pageManager: PageManager, preloadedPageManager: PreloadedPageManager, court: Court): Promise<GetCourtCase> {
+    const firstDegreeCaseCrawler = await FirstDegreeCaseCrawler.create(preloadedPageManager, court)
     const secondDegreeCaseCrawler = await SecondDegreeCaseCrawler.create(pageManager, court)
     return new GetCourtCase(firstDegreeCaseCrawler, secondDegreeCaseCrawler)
   }

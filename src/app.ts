@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer'
 import { CourtCaseProcessor } from './caseProcessor/caseProcessor'
 import { PageManager } from './pageManager/pageManager'
-import { PreloadedFirstDegreePageManager } from './pageManager/preloadedFirstDegreePageManager'
+import { PreloadedPageManager } from './pageManager/preloadedPageManager'
 
 import express from 'express'
 import { CourtCaseCrawlerController } from './courtCaseCrawler/controller'
@@ -21,9 +21,13 @@ puppeteer.launch({
   ]
 }).then(async browser => {
   const pageManager = await PageManager.create(browser)
-  const preloadedFirstDegreePageManager = await PreloadedFirstDegreePageManager.create(browser)
 
-  const courtCaseProcessor = new CourtCaseProcessor(pageManager, preloadedFirstDegreePageManager)
+  const preloadedPageManager = await PreloadedPageManager.create(browser, {
+    tjal: { url: 'https://www2.tjal.jus.br/cpopg/open.do' },
+    tjce: { url: 'https://esaj.tjce.jus.br/cpopg/open.do' }
+  })
+
+  const courtCaseProcessor = new CourtCaseProcessor(pageManager, preloadedPageManager)
   void courtCaseProcessor.startProcessing()
 
   const courtCaseCrawlerController = new CourtCaseCrawlerController(courtCaseProcessor)

@@ -2,7 +2,7 @@ import { type Court, type CourtCaseModel } from '../court/model'
 import { GetCourtCase } from '../courtCaseCrawler/getCourtCase'
 import { logger } from '@tjcommon/common'
 import { type PageManager } from '../pageManager/pageManager'
-import { type PreloadedFirstDegreePageManager } from '../pageManager/preloadedFirstDegreePageManager'
+import { type PreloadedPageManager } from '../pageManager/preloadedPageManager'
 import { generalSettings } from '../setup'
 import { concurrentTaskQueue } from '../utils/promise'
 
@@ -24,7 +24,7 @@ export class CourtCaseProcessor {
 
   constructor (
     private readonly pageManager: PageManager,
-    private readonly preloadedFirstDegreePageManager: PreloadedFirstDegreePageManager
+    private readonly preloadedPageManager: PreloadedPageManager
   ) { }
 
   public async startProcessing (): Promise<void> {
@@ -96,7 +96,7 @@ export class CourtCaseProcessor {
           try {
             const getCourtCase = await GetCourtCase.create(
               this.pageManager,
-              this.preloadedFirstDegreePageManager,
+              this.preloadedPageManager,
               courtCase.court
             )
             this.processedCourtCases.push(await getCourtCase.execute(courtCase.caseNumber, courtCase.processNumber, courtCase.originNumber))

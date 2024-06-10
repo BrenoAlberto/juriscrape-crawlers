@@ -2,7 +2,7 @@ import { type Page } from 'puppeteer'
 import { type CourtCrawler } from '../../court/crawler'
 import { FirstDegreeSearchPage } from './search.page'
 import { FirstDegreeCasePage } from './case.page'
-import { type PreloadedFirstDegreePageManager } from '../../pageManager/preloadedFirstDegreePageManager'
+import { type PreloadedPageManager } from '../../pageManager/preloadedPageManager'
 import { type Court } from '../../court/model'
 import { logger } from '@tjcommon/common'
 
@@ -12,7 +12,7 @@ export class FirstDegreeCaseCrawler implements CourtCrawler {
   private page: Page | undefined
 
   private constructor (
-    private readonly pageManager: PreloadedFirstDegreePageManager,
+    private readonly pageManager: PreloadedPageManager,
     private readonly court: Court
   ) { }
 
@@ -33,7 +33,7 @@ export class FirstDegreeCaseCrawler implements CourtCrawler {
     }
   }
 
-  public static async create (pageManager: PreloadedFirstDegreePageManager, court: Court): Promise<FirstDegreeCaseCrawler> {
+  public static async create (pageManager: PreloadedPageManager, court: Court): Promise<FirstDegreeCaseCrawler> {
     const crawler = new FirstDegreeCaseCrawler(pageManager, court)
     await crawler.init()
     return crawler
