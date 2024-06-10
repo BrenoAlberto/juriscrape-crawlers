@@ -1,8 +1,7 @@
-import { type Page } from 'puppeteer'
 import { type CourtCrawler } from '../../court/crawler'
 import { SecondDegreeCasePage } from './case.page'
 import { SecondDegreeSearchPage } from './search.page'
-import { type PageManager } from '@juriscrape/driver'
+import { type PageManager, type Page } from '@juriscrape/driver'
 import { type Court } from '../../court/model'
 import { logger } from '@juriscrape/common'
 

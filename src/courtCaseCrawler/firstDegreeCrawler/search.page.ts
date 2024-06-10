@@ -1,4 +1,4 @@
-import { type Page } from 'puppeteer'
+import { type Page } from '@juriscrape/driver'
 import { type Court } from '../../court/model'
 import { logger } from '@juriscrape/common'
 

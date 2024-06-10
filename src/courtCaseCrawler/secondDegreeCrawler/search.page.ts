@@ -1,5 +1,5 @@
-import { type Page } from 'puppeteer'
 import { type Court } from '../../court/model'
+import { type Page } from '@juriscrape/driver'
 import { logger } from '@juriscrape/common'
 
 export class SecondDegreeSearchPage {

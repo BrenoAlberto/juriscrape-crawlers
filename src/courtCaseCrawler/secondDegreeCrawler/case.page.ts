@@ -1,5 +1,4 @@
-import { type Page } from 'puppeteer'
-import { extractElementTextOrNull } from '../../utils/cssSelectorHelper'
+import { type Page, extractElementTextOrNull } from '@juriscrape/driver'
 
 export class SecondDegreeCasePage {
   private readonly elementsCSSSelectors = {

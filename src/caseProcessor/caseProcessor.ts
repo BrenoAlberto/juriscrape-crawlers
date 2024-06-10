@@ -1,9 +1,8 @@
 import { type Court, type CourtCaseModel } from '../court/model'
 import { GetCourtCase } from '../courtCaseCrawler/getCourtCase'
-import { logger } from '@juriscrape/common'
+import { logger, concurrentTaskQueue } from '@juriscrape/common'
 import { type PageManager, type PreloadedPageManager } from '@juriscrape/driver'
 import { generalSettings } from '../setup'
-import { concurrentTaskQueue } from '../utils/promise'
 
 export interface CrawlCourtCase {
   caseNumber: string

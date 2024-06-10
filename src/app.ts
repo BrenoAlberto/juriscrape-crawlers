@@ -1,6 +1,5 @@
-import puppeteer from 'puppeteer'
 import { CourtCaseProcessor } from './caseProcessor/caseProcessor'
-import { PageManager, PreloadedPageManager } from '@juriscrape/driver'
+import { PageManager, PuppeteerBrowser, PreloadedPageManager } from '@juriscrape/driver'
 
 import express from 'express'
 import { CourtCaseCrawlerController } from './courtCaseCrawler/controller'
@@ -13,13 +12,8 @@ dotenv.config()
 const app = express()
 app.use(express.json())
 
-puppeteer.launch({
-  headless: 'new',
-  args: [
-    '--no-sandbox',
-    '--disable-setuid-sandbox'
-  ]
-}).then(async browser => {
+const start = async (): Promise<void> => {
+  const browser = await new PuppeteerBrowser().create()
   const pageManager = await PageManager.create(browser, generalSettings.preloadedEmptyPages)
 
   const preloadedPageManager = await PreloadedPageManager.create(browser, {
@@ -35,4 +29,6 @@ puppeteer.launch({
   app.post('/crawl-court-cases', async (req, res) => await courtCaseCrawlerController.crawlCourtCases(req, res))
 
   app.listen(3008, () => { logger.info('Server is running on port 3008') })
-}).catch(logger.error)
+}
+
+void start()

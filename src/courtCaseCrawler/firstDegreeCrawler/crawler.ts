@@ -1,8 +1,7 @@
-import { type Page } from 'puppeteer'
 import { type CourtCrawler } from '../../court/crawler'
 import { FirstDegreeSearchPage } from './search.page'
 import { FirstDegreeCasePage } from './case.page'
-import { type PreloadedPageManager } from '@juriscrape/driver'
+import { type PreloadedPageManager, type Page } from '@juriscrape/driver'
 import { type Court } from '../../court/model'
 import { logger } from '@juriscrape/common'
 
