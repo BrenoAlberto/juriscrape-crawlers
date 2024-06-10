@@ -1,5 +1,5 @@
 {
-  "name": "tribunal-de-justica-crawlers",
+  "name": "juriscrape-crawlers",
   "version": "1.0.0",
   "description": "",
   "main": "src/app.ts",
